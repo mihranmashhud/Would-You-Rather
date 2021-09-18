@@ -56,10 +56,12 @@ class _PromptForQuery extends State<PromptForQuery> {
     return Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Row(
             children: <Widget>[
-              Text("I want"),
+              Text("I want "),
               DropdownButton<String>(
                 value: _cuisine,
                 icon: const Icon(Icons.expand_more),
@@ -77,7 +79,7 @@ class _PromptForQuery extends State<PromptForQuery> {
                   );
                 }).toList(),
               ),
-              Text("for"),
+              Text(" for "),
               DropdownButton<String>(
                 value: _meal,
                 icon: const Icon(Icons.expand_more),
