@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wouldyourather/main_page_user_input.dart';
 import 'package:wouldyourather/home_page.dart';
+import 'package:wouldyourather/Models/Versus_model.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -43,7 +44,8 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (BuildContext context) =>
-              const HomePage(title: 'Flutter Demo Home Page'),
+              // ignore: prefer_const_constructors
+              HomePage(title: 'Flutter Demo Home Page'),
           // "/VersusPage": (BuildContext context) => VersusPage(),
         },
       ),
