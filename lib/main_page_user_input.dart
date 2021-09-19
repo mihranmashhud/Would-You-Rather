@@ -171,7 +171,7 @@ class _PromptForQueryState extends State<PromptForQuery> {
                               "nutritionScore": "76%",
                               "image":
                                   "https://www.tasteandtellblog.com/wp-content/uploads/2020/01/Alfredo-Pasta-Bacon-tasteandtellblog.com-1-768x512.jpg",
-                              "price": "7",
+                              "price": "16",
                               "cookTime": "34 mins"
                             },
                           ];
