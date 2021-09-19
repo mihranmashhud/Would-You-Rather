@@ -1,0 +1,7 @@
+flask
+requests.api
+werkzeug.wrappers
+flask_restful
+psycopg2
+requests
+json
