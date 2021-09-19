@@ -7,13 +7,10 @@ import requests
 import json
 from functools import wraps
 from six.moves.urllib.request import urlopen
-from werkzeug.middleware.proxy_fix import ProxyFix
 from jose import jwt
 
 app = Flask(__name__)
 api = Api(app)
-
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 DB_CONNECTION_STRING = "postgresql://alaap:Alaapguoft123!@free-tier.gcp-us-central1.cockroachlabs.cloud:26257/app_database?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3Dwould-you-rather-3535"
 TENANT_NAME = "foodwisehtn"
@@ -228,9 +225,9 @@ class Preferences(Resource):
             return 200
         else:
             return 400
-
+        
+@requires_auth
 class query_recipes(Resource):
-    @requires_auth
     def get(self):
         args = query_recipes_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch?number=50&sort=popularity&sortDirection=desc"
@@ -251,13 +248,10 @@ class query_recipes(Resource):
         data = response.json()
         querystring = {"ids": ""}
         querystr = ""
-        oldquerystr = ""
         for i in range(10):
             try:
-                oldquerystr = querystr
                 querystr += str(data['results'][i-1]['id']) + ","
             except:
-                querystr = oldquerystr
                 break
         querystr = querystr[:-1]
         querystring = {"ids": querystr}
@@ -327,18 +321,18 @@ class Favourites(Resource):
         else:
             return 400
 
+@requires_auth
 class query_random(Resource):
-    @requires_auth
     def get(self):
         args = query_random_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=10&"
         if (args['tags']):
             url += f"tags = {args['tags']}"
         response = requests.get(url, headers={"X-RapidAPI-Key": KEY})
-        return response
+        return response.json()
 
+@requires_auth
 class query_by_id(Resource):
-    @requires_auth
     def get(self):
         args = recipe_by_id_args.parse_args()
         url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/479101/information?id={args['recipe_id']}"
