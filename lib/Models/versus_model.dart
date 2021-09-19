@@ -57,32 +57,4 @@ class VersusModel extends ChangeNotifier {
     _cookTime = cookTime;
     notifyListeners();
   }
-
-  // void currentCardRecipe(int index) {}
-
-  // bool trash(String side, int index) {
-  //   recipeStack.push(index);
-  //   if (side == "top") {
-  //     if (topCard + 2 >= jsonResponse.length) {
-  //       notifyListeners();
-  //       return false;
-  //     }
-  //     topCard += 2;
-  //   } else {
-  //     if (bottomCard >= jsonResponse.length) {
-  //       notifyListeners();
-  //       return false;
-  //     }
-  //     bottomCard += 2;
-  //   }
-  //   notifyListeners();
-  //   return true;
-  // }
-
-  // bool undo(String side) {
-  //   int index = 0;
-  //   if (recipeStack.isNotEmpty) {
-  //     index = recipeStack.pop();
-  //   }
-  // }
 }

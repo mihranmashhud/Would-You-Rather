@@ -20,36 +20,104 @@ class _SingleCardState extends State<SingleCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Row(children: [
         Expanded(
-          child: Image(image: NetworkImage(widget.image)),
-        ),
+            child: ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+          child: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              image: NetworkImage(widget.image),
+              fit: BoxFit.cover,
+            )),
+          ),
+        )),
         Expanded(
-          child: Column(children: [
-            // Recipe Name
-            Text(
-              widget.recipeName,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            // Nutrition Score
-            RichText(
-                text: TextSpan(children: [
-              const WidgetSpan(child: Icon(FontAwesome5.apple_alt)),
-              TextSpan(text: widget.nutritionScore),
-            ])),
-            // Price
-            RichText(
-                text: TextSpan(children: [
-              const WidgetSpan(child: Icon(FontAwesome5.dollar_sign)),
-              TextSpan(text: widget.price)
-            ])),
-            // Cook Time
-            RichText(
-                text: TextSpan(children: [
-              const WidgetSpan(child: Icon(FontAwesome5.hourglass)),
-              TextSpan(text: widget.cookTime)
-            ])),
-          ]),
+          child: Container(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              // Recipe Name
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      widget.recipeName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 32),
+                    ),
+                  ),
+                ),
+              ),
+              // Nutrition Score
+              Padding(
+                  padding: EdgeInsets.fromLTRB(30, 20, 0, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: RichText(
+                          text: TextSpan(children: [
+                        const WidgetSpan(
+                            child: Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                          child: Icon(
+                            FontAwesome5.apple_alt,
+                            size: 30,
+                          ),
+                        )),
+                        TextSpan(
+                            text: widget.nutritionScore,
+                            style: Theme.of(context).textTheme.headline4),
+                      ])),
+                    ),
+                  )),
+              // Price
+              Padding(
+                  padding: EdgeInsets.fromLTRB(30, 20, 0, 0),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: RichText(
+                              text: TextSpan(children: [
+                            const WidgetSpan(
+                                child: Icon(
+                              FontAwesome5.dollar_sign,
+                              size: 30,
+                            )),
+                            TextSpan(
+                                text: widget.price,
+                                style: Theme.of(context).textTheme.headline4)
+                          ]))))),
+              // Cook Time
+              Padding(
+                  padding: EdgeInsets.fromLTRB(30, 20, 0, 0),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: RichText(
+                            text: TextSpan(children: [
+                          const WidgetSpan(
+                              child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                            child: Icon(
+                              FontAwesome5.hourglass,
+                              size: 30,
+                            ),
+                          )),
+                          TextSpan(
+                              text: widget.cookTime,
+                              style: Theme.of(context).textTheme.headline4)
+                        ])),
+                      ))),
+            ]),
+          ),
         )
       ]),
     );
