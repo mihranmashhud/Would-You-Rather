@@ -17,7 +17,7 @@ class _VersusPageState extends State<VersusPage> {
     return Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
-          image: AssetImage("assets/home_page_background.jpg"),
+          image: AssetImage("assets/jill_heyer_toxlLueLNDs_unsplash.jpg"),
           fit: BoxFit.cover,
         )),
         child: Stack(children: [
@@ -31,6 +31,7 @@ class _VersusPageState extends State<VersusPage> {
                 child: Consumer<VersusModel>(
                     builder: (context, model, child) => Swiper(
                           itemBuilder: (BuildContext context, int index) {
+                            model.currentIndex = index;
                             return SizedBox(
                               child: SingleCard(
                                   recipeName: model.jsonResponse[index]

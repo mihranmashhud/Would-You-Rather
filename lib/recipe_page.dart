@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:provider/provider.dart';
 
 class RecipePage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _RecipePageState extends State<RecipePage> {
   @override
   Widget build(BuildContext context) {
     return WebView(
-      initialUrl: 'https://www.budgetbytes.com/the-peanut-butter-lunch-box/',
+      initialUrl: 'https://www.tasteandtellblog.com/bacon-alfredo-pasta/',
     );
   }
 }

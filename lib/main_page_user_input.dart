@@ -133,41 +133,46 @@ class _PromptForQueryState extends State<PromptForQuery> {
                         // TODO: Turn back into async
                         onPressed: () {
                           // TODO: Add backend api url
-                          // Response jsonReponse = await get('');
+                          // final uri = Uri.https('https://foodwisewebapp.azurewebsites.net/', )
+                          // Response jsonReponse = await get('https://foodwisewebapp.azurewebsites.net/',body:'');
                           // List<Map<String, dynamic>> response =
                           //     jsonDecode(jsonReponse.body);
                           List<Map<String, dynamic>> response = [
                             {
-                              "recipeName": "Chunky Pizza",
-                              "nutritionScore": "69%",
+                              "recipeName": "Tomato Soup",
+                              "nutritionScore": "84%",
                               "image":
-                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
-                              "price": "\$21",
-                              "cookTime": "69 mins"
+                                  "https://littlespoonfarm.com/wp-content/uploads/2021/01/homemade-tomato-soup-recipe.jpg",
+                              "price": "7",
+                              "cookTime": "65 mins",
+                              "sourceURL":
+                                  "https://littlespoonfarm.com/homemade-tomato-soup-recipe/"
                             },
                             {
-                              "recipeName": "ButterSquash Pie",
+                              "recipeName": "Butterscotch Pie",
                               "nutritionScore": "25%",
                               "image":
-                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
-                              "price": "\$56",
-                              "cookTime": "23 mins"
+                                  "https://www.chowhound.com/a/img/resize/8e57209554415076042c31043c6f15d70b692077/2013/11/10733_RecipeImage_620x413_brown_butterscotch_pie.jpg?fit=bounds&width=800",
+                              "price": "13",
+                              "cookTime": "53 mins",
+                              "sourceURL":
+                                  "https://www.chowhound.com/recipes/brown-butterscotch-pie-10733"
                             },
                             {
-                              "recipeName": "Monkey Pizza",
-                              "nutritionScore": "629%",
+                              "recipeName": "Hawaiian Pizza",
+                              "nutritionScore": "59%",
                               "image":
-                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
-                              "price": "\$23421",
-                              "cookTime": "64234239 mins"
+                                  "https://cdn.vox-cdn.com/thumbor/EfQjxLoSgcjB_LnyX2OqM2UHD6w=/0x0:2000x1333/920x613/filters:focal(840x507:1160x827):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/55188531/hawaiian_pizza_sh.0.jpg",
+                              "price": "21",
+                              "cookTime": "40 mins"
                             },
                             {
-                              "recipeName": "Jumping Jack Jellybeans",
-                              "nutritionScore": "12%",
+                              "recipeName": "Alfredo Pasta",
+                              "nutritionScore": "76%",
                               "image":
-                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
-                              "price": "\$7",
-                              "cookTime": "2 mins"
+                                  "https://www.tasteandtellblog.com/wp-content/uploads/2020/01/Alfredo-Pasta-Bacon-tasteandtellblog.com-1-768x512.jpg",
+                              "price": "7",
+                              "cookTime": "34 mins"
                             },
                           ];
                           model.jsonResponse = response;

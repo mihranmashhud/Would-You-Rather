@@ -69,6 +69,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/home_page_background.jpg
+    - assets/jill_heyer_toxlLueLNDs_unsplash.jpg
+    - assets/trinh-minh-th-FaJb5Cygyvw-unsplash.jpg
+    - assets/lukas-blazek-f-TWhXOrLiU-unsplash.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
