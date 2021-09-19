@@ -6,7 +6,6 @@ import 'package:wouldyourather/preferences.dart';
 import 'package:wouldyourather/Models/Versus_model.dart';
 import 'package:wouldyourather/versus_page.dart';
 import 'package:provider/provider.dart';
-import 'package:wouldyourather/versus_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
