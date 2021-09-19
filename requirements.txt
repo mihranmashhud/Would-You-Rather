@@ -4,3 +4,5 @@ werkzeug
 flask_restful
 psycopg2
 requests
+six
+jose
