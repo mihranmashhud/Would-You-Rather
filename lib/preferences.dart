@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wouldyourather/Models/preferences.dart';
+import 'package:http/http.dart' as http;
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({Key? key}) : super(key: key);
@@ -60,7 +61,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 ),
                 floatingActionButton: FloatingActionButton.large(
                   onPressed: () {
-                    //TODO: save prefs to server.
+
                   },
                   child: const Icon(Icons.save),
                   backgroundColor: Colors.blue,

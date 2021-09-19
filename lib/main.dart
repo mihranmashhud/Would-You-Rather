@@ -81,7 +81,6 @@ class _MyApp extends State<MyApp> {
     setState(() {
       _jwt = result.idToken;
     });
-    print(result.idToken);
   }
 
   @override
