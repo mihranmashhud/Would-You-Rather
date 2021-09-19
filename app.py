@@ -1,10 +1,13 @@
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, _request_ctx_stack
 from requests.api import delete
 from werkzeug.wrappers import Response
 from flask_restful import Api, Resource, reqparse
 import psycopg2
 import requests
 import json
+from functools import wraps
+from six.moves.urllib.request import urlopen
+from jose import jwt
 
 app = Flask(__name__)
 api = Api(app)
@@ -50,70 +53,181 @@ favourites_patch_args.add_argument("username", type=str, help="The name of the u
 favourites_patch_args.add_argument("recipe_id", type=int, help="The identification number of the recipe is required", required=True)
 favourites_patch_args.add_argument("rating", type=int, help="The rating the user gave the recipe is required", required=True)
 
+class AuthError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
+
+def get_token_auth_header():
+    authenticate = request.headers.get("Authorization", None)
+    if not authenticate:
+        raise AuthError({"code": "authorization_header_missing",
+                         "description":
+                         "Authorization header is expected"}, 401)
+
+    authenticate = authenticate.split()
+
+    if authenticate[0].lower() != "bearer":
+        raise AuthError({"code": "invalid_header",
+                         "description":
+                         "Authorization header must start with"
+                         " Bearer"}, 401)
+    elif len(authenticate) != 1:
+        raise AuthError({"code": "invalid_header",
+                         "description": "Wrong number of tokens found"}, 401)
+
+    return authenticate[1]
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            token = get_token_auth_header()
+            jsonurl = urlopen("https://" +
+                              TENANT_NAME + ".b2clogin.com/" +
+                              TENANT_NAME + ".onmicrosoft.com/" +
+                              B2C_POLICY + "/discovery/v2.0/keys")
+            jwks = json.loads(jsonurl.read())
+            unverified_header = jwt.get_unverified_header(token)
+            rsa_key = {}
+            for key in jwks["keys"]:
+                if key["kid"] == unverified_header["kid"]:
+                    rsa_key = {
+                        "kty": key["kty"],
+                        "kid": key["kid"],
+                        "use": key["use"],
+                        "n": key["n"],
+                        "e": key["e"]
+                    }
+        except Exception:
+            raise AuthError({"code": "invalid_header",
+                             "description":
+                             "Unable to parse authentication"
+                             " token."}, 401)
+        if rsa_key:
+            try:
+                payload = jwt.decode(
+                    token,
+                    rsa_key,
+                    algorithms=["RS256"],
+                    audience=CLIENT_ID,
+                    issuer="https://" + TENANT_NAME +
+                    ".b2clogin.com/" + TENANT_ID + "/v2.0/"
+                )
+            except jwt.ExpiredSignatureError:
+                raise AuthError({"code": "token_expired",
+                                 "description": "token is expired"}, 401)
+            except jwt.JWTClaimsError:
+                raise AuthError({"code": "invalid_claims",
+                                 "description":
+                                 "incorrect claims,"
+                                 "please check the audience and issuer"}, 401)
+            except Exception:
+                raise AuthError({"code": "invalid_header",
+                                 "description":
+                                 "Unable to parse authentication"
+                                 " token."}, 401)
+            _request_ctx_stack.top.current_user = payload
+            return f(*args, **kwargs)
+        raise AuthError({"code": "invalid_header",
+                         "description": "Unable to find appropriate key"}, 401)
+    return decorated
+
+def requires_scope(required_scope):
+    """Determines if the required scope is present in the Access Token
+    Args:
+        required_scope (str): The scope required to access the resource
+    """
+    token = get_token_auth_header()
+    unverified_claims = jwt.get_unverified_claims(token)
+    if unverified_claims.get("scp"):
+        token_scopes = unverified_claims["scp"].split()
+        for token_scope in token_scopes:
+            if token_scope == required_scope:
+                return True
+    raise AuthError({
+        "code": "Unauthorized",
+        "description": "You don't have access to this resource"
+    }, 403)
+
 class Preferences(Resource):
+    @requires_auth
     def get(self):
-        args = preferences_delete_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        result = ""
-        with conn.cursor() as curr:
-            curr.execute(f"SELECT * from favourites WHERE username = \'{args['username']}\' LIMIT 1")
-            result = curr.fetchall()
-            conn.commit()
-        conn.close()
+        if (requires_scope("Accounts.Read")):
+            args = preferences_delete_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            result = ""
+            with conn.cursor() as curr:
+                curr.execute(f"SELECT * from favourites WHERE username = \'{args['username']}\' LIMIT 1")
+                result = curr.fetchall()
+                conn.commit()
+            conn.close()
         return result
 
+    @requires_auth
     def put(self):
-        args = preferences_put_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        StringDB = f"INSERT INTO preferences (username, diet_type, max_time, restrictions) VALUES (\'{args['username']}\'"
-        for arg in args:
-            if (arg != 'username'):
-                if (args[arg]):
-                    StringDB += f", \'{args[arg]}\'"
-                else:
-                    StringDB += ", NULL"
-        StringDB += ")"
-        with conn.cursor() as curr:
-            curr.execute(f"SELECT COUNT(*) FROM preferences WHERE username = \'{args['username']}\'")
-            result = curr.fetchall()
-            if (result[0][0] == 0):
-                curr.execute(StringDB)
-            conn.commit()
-        conn.close()
-        return 200
+        if (requires_scope("Accounts.Write")):
+            args = preferences_put_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            StringDB = f"INSERT INTO preferences (username, diet_type, max_time, restrictions) VALUES (\'{args['username']}\'"
+            for arg in args:
+                if (arg != 'username'):
+                    if (args[arg]):
+                        StringDB += f", \'{args[arg]}\'"
+                    else:
+                        StringDB += ", NULL"
+            StringDB += ")"
+            with conn.cursor() as curr:
+                curr.execute(f"SELECT COUNT(*) FROM preferences WHERE username = \'{args['username']}\'")
+                result = curr.fetchall()
+                if (result[0][0] == 0):
+                    curr.execute(StringDB)
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
+    @requires_auth
     def patch(self):
-        args = preferences_put_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        StringDB = f"UPDATE preferences SET "
-        STRING1 = "("
-        STRING2 = "("
-        for arg in args:
-            if (arg != 'username'):
-                if (args[arg]):
-                    STRING1 += arg +", "
-                    STRING2 += f"\'{args[arg]}\', "
-        STRING1 = STRING1[:-2] + ")"
-        STRING2 = STRING2[:-2] + ")"
-        StringDB = StringDB + STRING1 + " = " + STRING2 + " "
-        StringDB += f"WHERE username = \'{args['username']}\'"
-        with conn.cursor() as curr:
-            curr.execute(StringDB)
-            conn.commit()
-        conn.close()
-        return 200
+        if (requires_scope("Accounts.Write")):
+            args = preferences_put_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            StringDB = f"UPDATE preferences SET "
+            STRING1 = "("
+            STRING2 = "("
+            for arg in args:
+                if (arg != 'username'):
+                    if (args[arg]):
+                        STRING1 += arg +", "
+                        STRING2 += f"\'{args[arg]}\', "
+            STRING1 = STRING1[:-2] + ")"
+            STRING2 = STRING2[:-2] + ")"
+            StringDB = StringDB + STRING1 + " = " + STRING2 + " "
+            StringDB += f"WHERE username = \'{args['username']}\'"
+            with conn.cursor() as curr:
+                curr.execute(StringDB)
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
+    @requires_auth
     def delete(self):
-        delete_name = request.headers.get("username")
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        with conn.cursor() as curr:
-            curr.execute(f"DELETE FROM preferences WHERE username = \'{delete_name}\'")
-            conn.commit()
-        conn.close()
-        return 200
-        
+        if (requires_scope("Accounts.Write")):
+            delete_name = request.headers.get("username")
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            with conn.cursor() as curr:
+                curr.execute(f"DELETE FROM preferences WHERE username = \'{delete_name}\'")
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
 class query_recipes(Resource):
+    @requires_auth
     def get(self):
         args = query_recipes_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch?number=50&sort=popularity&sortDirection=desc"
@@ -134,10 +248,13 @@ class query_recipes(Resource):
         data = response.json()
         querystring = {"ids": ""}
         querystr = ""
+        oldquerystr = ""
         for i in range(10):
             try:
+                oldquerystr = querystr
                 querystr += str(data['results'][i-1]['id']) + ","
             except:
+                querystr = oldquerystr
                 break
         querystr = querystr[:-1]
         querystring = {"ids": querystr}
@@ -147,62 +264,78 @@ class query_recipes(Resource):
         return response.json()
 
 class Favourites(Resource):
+    @requires_auth
     def get(self):
-        args = favourites_get_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        result = ""
-        with conn.cursor() as curr:
-            curr.execute(f"SELECT * from favourites WHERE username = \'{args['username']}\' LIMIT 10")
-            result = curr.fetchall()
-            conn.commit()
-        conn.close()
+        if (requires_scope("Accounts.Read")):
+            args = favourites_get_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            result = ""
+            with conn.cursor() as curr:
+                curr.execute(f"SELECT * from favourites WHERE username = \'{args['username']}\' LIMIT 10")
+                result = curr.fetchall()
+                conn.commit()
+            conn.close()
         return result
 
+    @requires_auth
     def put(self):
-        args = favourites_put_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        with conn.cursor() as curr:
-            curr.execute(f"SELECT COUNT(*) FROM favourites WHERE username = \'{args['username']}\' AND recipe_id = \'{args['recipe_id']}\'")
-            result = curr.fetchall()
-            if (result[0][0] == 0):
-                curr.execute(f"INSERT INTO favourites (username, recipe_id, rating)\nVALUES (\'{args['username']}\', \'{args['recipe_id']}\', {args['rating']})")
-                curr.execute(f"SELECT COUNT(*) FROM favourites WHERE username = \'{args['username']}\'")
+        if (requires_scope("Accounts.Write")):
+            args = favourites_put_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            with conn.cursor() as curr:
+                curr.execute(f"SELECT COUNT(*) FROM favourites WHERE username = \'{args['username']}\' AND recipe_id = \'{args['recipe_id']}\'")
                 result = curr.fetchall()
-                if (result[0][0] > 10):
-                    curr.execute(f"DELETE FROM favourites WHERE id IN (SELECT id FROM favourites WHERE username = \'{args['username']}\' ORDER BY id ASC LIMIT 1)")
-            conn.commit()
-        conn.close()
-        return 
+                if (result[0][0] == 0):
+                    curr.execute(f"INSERT INTO favourites (username, recipe_id, rating)\nVALUES (\'{args['username']}\', \'{args['recipe_id']}\', {args['rating']})")
+                    curr.execute(f"SELECT COUNT(*) FROM favourites WHERE username = \'{args['username']}\'")
+                    result = curr.fetchall()
+                    if (result[0][0] > 10):
+                        curr.execute(f"DELETE FROM favourites WHERE id IN (SELECT id FROM favourites WHERE username = \'{args['username']}\' ORDER BY id ASC LIMIT 1)")
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
+    @requires_auth
     def patch(self):
-        args = favourites_patch_args.parse_args()
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        with conn.cursor() as curr:
-            curr.execute(f"UPDATE favourites SET rating = \'{args['rating']}\' WHERE username = \'{args['username']}\' AND recipe_id = \'{args['recipe_id']}\'")
-            conn.commit()
-        conn.close()
-        return 200
+        if (requires_scope("Accounts.Write")):
+            args = favourites_patch_args.parse_args()
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            with conn.cursor() as curr:
+                curr.execute(f"UPDATE favourites SET rating = \'{args['rating']}\' WHERE username = \'{args['username']}\' AND recipe_id = \'{args['recipe_id']}\'")
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
+    @requires_auth
     def delete(self):
-        delete_name = request.headers.get("username")
-        delete_id = request.headers.get("request_id")
-        conn = psycopg2.connect(DB_CONNECTION_STRING)
-        with conn.cursor() as curr:
-            curr.execute(f"DELETE FROM favourites WHERE username = \'{delete_name}\' AND recipe_id = \'{delete_id}\'")
-            conn.commit()
-        conn.close()
-        return 200
+        if (requires_scope("Accounts.Write")):
+            delete_name = request.headers.get("username")
+            delete_id = request.headers.get("request_id")
+            conn = psycopg2.connect(DB_CONNECTION_STRING)
+            with conn.cursor() as curr:
+                curr.execute(f"DELETE FROM favourites WHERE username = \'{delete_name}\' AND recipe_id = \'{delete_id}\'")
+                conn.commit()
+            conn.close()
+            return 200
+        else:
+            return 400
 
 class query_random(Resource):
+    @requires_auth
     def get(self):
         args = query_random_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=10&"
         if (args['tags']):
             url += f"tags = {args['tags']}"
         response = requests.get(url, headers={"X-RapidAPI-Key": KEY})
-        return response.json()
+        return response
 
 class query_by_id(Resource):
+    @requires_auth
     def get(self):
         args = recipe_by_id_args.parse_args()
         url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/479101/information?id={args['recipe_id']}"
