@@ -24,19 +24,16 @@ class HomePage extends StatelessWidget {
             tooltip: 'Preferences',
           ),
         ),
-        body: SafeArea(
-            bottom: false,
-            top: false,
-            child: Stack(children: <Widget>[
-              Container(
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage("assets/home_page_background.jpg"),
-                  fit: BoxFit.cover,
-                )),
-                child: const Center(child: PromptForQuery()),
-              ),
-            ])));
+        body: Stack(children: <Widget>[
+          Container(
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+              image: AssetImage("assets/home_page_background.jpg"),
+              fit: BoxFit.cover,
+            )),
+            child: const Center(child: PromptForQuery()),
+          ),
+        ]));
   }
 }
 

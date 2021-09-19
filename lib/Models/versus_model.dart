@@ -10,7 +10,9 @@ class VersusModel extends ChangeNotifier {
   static String _price = "";
   static String _image = "";
   static String _cookTime = "";
-  static stack.Stack<Map> recipeStack = stack.Stack();
+  static stack.Stack<int> recipeStack = stack.Stack<int>();
+  static int topCard = 0;
+  static int bottomCard = 1;
 
   List<Map<String, dynamic>> get jsonResponse => _jsonResponse;
   String get recipeName => _recipeName;
@@ -49,5 +51,31 @@ class VersusModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveJSON(String jsonInput) {}
+  // void currentCardRecipe(int index) {}
+
+  // bool trash(String side, int index) {
+  //   recipeStack.push(index);
+  //   if (side == "top") {
+  //     if (topCard + 2 >= jsonResponse.length) {
+  //       notifyListeners();
+  //       return false;
+  //     }
+  //     topCard += 2;
+  //   } else {
+  //     if (bottomCard >= jsonResponse.length) {
+  //       notifyListeners();
+  //       return false;
+  //     }
+  //     bottomCard += 2;
+  //   }
+  //   notifyListeners();
+  //   return true;
+  // }
+
+  // bool undo(String side) {
+  //   int index = 0;
+  //   if (recipeStack.isNotEmpty) {
+  //     index = recipeStack.pop();
+  //   }
+  // }
 }

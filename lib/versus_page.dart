@@ -1,60 +1,41 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wouldyourather/Models/versus_model.dart';
 import 'package:provider/provider.dart';
-import "package:hop_swipe_cards/hop_swipe_cards.dart";
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:wouldyourather/Components/single_card.dart';
 
 class VersusPage extends StatefulWidget {
-  const VersusPage({Key? key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => _VersusPageState();
 }
 
 class _VersusPageState extends State<VersusPage> {
+  List<String> images = [
+    "https://www.click2houston.com/resizer/mAlhlQXB4CLlAmUQvp2osHvSqXY=/640x360/smart/filters:format(jpeg):strip_exif(true):strip_icc(true):no_upscale(true):quality(65)/arc-anglerfish-arc2-prod-gmg.s3.amazonaws.com/public/JRT5PXRT4VDR3P5MOKPQ5YZY5M.jpg"
+  ];
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Stack(children: [
-      Container(),
+      // Container(),
       Column(
         children: [
-          Consumer<VersusModel>(builder: (context, model, child) {
-            return SizedBox(
-                // height: MediaQuery.of(context).size.height * 0.5,
-                child: HopSwipeCards(
-                    // ignore: prefer_const_constructors
-                    cardBuilder: (context, index, a) => SingleCard(
-                          recipeName: model.recipeName,
-                          nutritionScore: model.nutritionScore,
-                          price: model.price,
-                          image: model.image,
-                          cookTime: model.cookTime,
-                        ),
-                    totalNum: 2));
-          }),
-          Consumer<VersusModel>(builder: (context, model, child) {
-            return SizedBox(
-                // height: MediaQuery.of(context).size.height * 0.5,
-                child: HopSwipeCards(
-                    // ignore: prefer_const_constructors
-                    cardBuilder: (context, index, a) => SingleCard(
-                          recipeName: model.recipeName,
-                          nutritionScore: model.nutritionScore,
-                          price: model.price,
-                          image: model.image,
-                          cookTime: model.cookTime,
-                        ),
-                    totalNum: 2));
-          }),
+          Swiper(
+            itemBuilder: (BuildContext context, int index) {
+              return SizedBox(
+                child: SingleCard(
+                    recipeName: index.toString(),
+                    nutritionScore: "14",
+                    price: "4124",
+                    image: images[0],
+                    cookTime: "1234124"),
+              );
+            },
+            itemCount: 10,
+            itemWidth: 400.0,
+            itemHeight: 400.0,
+            layout: SwiperLayout.TINDER,
+          )
         ],
       ),
     ]);
