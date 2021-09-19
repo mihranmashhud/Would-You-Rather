@@ -4,4 +4,3 @@ werkzeug
 flask_restful
 psycopg2
 requests
-json
