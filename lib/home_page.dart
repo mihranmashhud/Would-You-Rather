@@ -9,6 +9,21 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: const Text("Would You Rather?",
+              style: TextStyle(color: Colors.black, fontSize: 24)),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.menu, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).pushNamed("/Preferences");
+            },
+            tooltip: 'Preferences',
+          ),
+        ),
         body: SafeArea(
             bottom: false,
             top: false,
@@ -21,21 +36,6 @@ class HomePage extends StatelessWidget {
                 )),
                 child: const Center(child: PromptForQuery()),
               ),
-              Positioned(
-                  child: AppBar(
-                title: const Text("Would You Rather?",
-                    style: TextStyle(color: Colors.black, fontSize: 24)),
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(Icons.menu, color: Colors.black),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/Preferences");
-                  },
-                  tooltip: 'Preferences',
-                ),
-              ))
             ])));
   }
 }
