@@ -1,15 +1,12 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wouldyourather/Models/versus_model.dart';
 import 'package:provider/provider.dart';
-import "package:hop_swipe_cards/hop_swipe_cards.dart";
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:wouldyourather/Components/single_card.dart';
+import 'package:wouldyourather/recipe_page.dart';
 
 class VersusPage extends StatefulWidget {
-  const VersusPage({Key? key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => _VersusPageState();
 }
@@ -17,46 +14,75 @@ class VersusPage extends StatefulWidget {
 class _VersusPageState extends State<VersusPage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Stack(children: [
-      Container(),
-      Column(
-        children: [
-          Consumer<VersusModel>(builder: (context, model, child) {
-            return SizedBox(
-                // height: MediaQuery.of(context).size.height * 0.5,
-                child: HopSwipeCards(
-                    // ignore: prefer_const_constructors
-                    cardBuilder: (context, index, a) => SingleCard(
-                          recipeName: model.recipeName,
-                          nutritionScore: model.nutritionScore,
-                          price: model.price,
-                          image: model.image,
-                          cookTime: model.cookTime,
-                        ),
-                    totalNum: 2));
-          }),
-          Consumer<VersusModel>(builder: (context, model, child) {
-            return SizedBox(
-                // height: MediaQuery.of(context).size.height * 0.5,
-                child: HopSwipeCards(
-                    // ignore: prefer_const_constructors
-                    cardBuilder: (context, index, a) => SingleCard(
-                          recipeName: model.recipeName,
-                          nutritionScore: model.nutritionScore,
-                          price: model.price,
-                          image: model.image,
-                          cookTime: model.cookTime,
-                        ),
-                    totalNum: 2));
-          }),
-        ],
-      ),
-    ]);
+    return Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage("assets/home_page_background.jpg"),
+          fit: BoxFit.cover,
+        )),
+        child: Stack(children: [
+          // Container(),
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed("/RecipePage");
+                },
+                child: Consumer<VersusModel>(
+                    builder: (context, model, child) => Swiper(
+                          itemBuilder: (BuildContext context, int index) {
+                            return SizedBox(
+                              child: SingleCard(
+                                  recipeName: model.jsonResponse[index]
+                                      ["recipeName"],
+                                  nutritionScore: model.jsonResponse[index]
+                                      ["nutritionScore"],
+                                  price: model.jsonResponse[index]["price"],
+                                  image: model.jsonResponse[index]["image"],
+                                  cookTime: model.jsonResponse[index]
+                                      ["cookTime"]),
+                            );
+                          },
+                          itemCount: model.jsonResponse.length ~/ 2,
+                          itemWidth: MediaQuery.of(context).size.width,
+                          itemHeight: MediaQuery.of(context).size.height * 0.5,
+                          layout: SwiperLayout.TINDER,
+                        )),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed("/RecipePage");
+                },
+                child: Consumer<VersusModel>(
+                    builder: (context, model, child) => Swiper(
+                          itemBuilder: (BuildContext context, int index) {
+                            return SizedBox(
+                              child: SingleCard(
+                                  recipeName: model.jsonResponse[
+                                          model.jsonResponse.length - index - 1]
+                                      ["recipeName"],
+                                  nutritionScore:
+                                      model.jsonResponse[model.jsonResponse.length - index - 1]
+                                          ["nutritionScore"],
+                                  price:
+                                      model.jsonResponse[model.jsonResponse.length - index - 1]
+                                          ["price"],
+                                  image:
+                                      model.jsonResponse[model.jsonResponse.length - index - 1]
+                                          ["image"],
+                                  cookTime:
+                                      model.jsonResponse[model.jsonResponse.length - index - 1]
+                                          ["cookTime"]),
+                            );
+                          },
+                          itemCount: model.jsonResponse.length ~/ 2,
+                          itemWidth: MediaQuery.of(context).size.width,
+                          itemHeight: MediaQuery.of(context).size.height * 0.5,
+                          layout: SwiperLayout.TINDER,
+                        )),
+              )
+            ],
+          ),
+        ]));
   }
 }

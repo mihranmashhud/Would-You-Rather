@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wouldyourather/Models/versus_model.dart';
@@ -69,7 +71,7 @@ class _PromptForQueryState extends State<PromptForQuery> {
         key: _formKey,
         child: Consumer<VersusModel>(
             builder: (context, model, child) => Container(
-                margin: const EdgeInsets.all(40.0),
+                margin: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
@@ -128,8 +130,48 @@ class _PromptForQueryState extends State<PromptForQuery> {
                     Center(
                       child: FloatingActionButton(
                         backgroundColor: Colors.green,
+                        // TODO: Turn back into async
                         onPressed: () {
-                          // model.jsonResponse(getRecipeList(_cuisine, _meal));
+                          // TODO: Add backend api url
+                          // Response jsonReponse = await get('');
+                          // List<Map<String, dynamic>> response =
+                          //     jsonDecode(jsonReponse.body);
+                          List<Map<String, dynamic>> response = [
+                            {
+                              "recipeName": "Chunky Pizza",
+                              "nutritionScore": "69%",
+                              "image":
+                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
+                              "price": "\$21",
+                              "cookTime": "69 mins"
+                            },
+                            {
+                              "recipeName": "ButterSquash Pie",
+                              "nutritionScore": "25%",
+                              "image":
+                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
+                              "price": "\$56",
+                              "cookTime": "23 mins"
+                            },
+                            {
+                              "recipeName": "Monkey Pizza",
+                              "nutritionScore": "629%",
+                              "image":
+                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
+                              "price": "\$23421",
+                              "cookTime": "64234239 mins"
+                            },
+                            {
+                              "recipeName": "Jumping Jack Jellybeans",
+                              "nutritionScore": "12%",
+                              "image":
+                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
+                              "price": "\$7",
+                              "cookTime": "2 mins"
+                            },
+                          ];
+                          model.jsonResponse = response;
+                          print(model.jsonResponse);
                           Navigator.of(context).pushNamed("/VersusPage");
                         },
                         child: const Icon(

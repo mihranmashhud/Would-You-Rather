@@ -7,6 +7,7 @@ import 'package:wouldyourather/Models/versus_model.dart';
 import 'package:wouldyourather/versus_page.dart';
 import 'package:wouldyourather/Models/preferences.dart';
 import 'package:wouldyourather/Models/auth_model.dart';
+import 'package:wouldyourather/recipe_page.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
@@ -97,7 +98,6 @@ class _MyApp extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
 
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<VersusModel>(
@@ -107,7 +107,7 @@ class _MyApp extends State<MyApp> {
           create: (_) => PreferencesModel(),
         ),
         ChangeNotifierProvider<AuthModel>(
-            create: (_) => AuthModel(),
+          create: (_) => AuthModel(),
         ),
       ],
       child: MaterialApp(
@@ -125,24 +125,25 @@ class _MyApp extends State<MyApp> {
           "/": (BuildContext context) {
             Provider.of<AuthModel>(context, listen: false).jwt = _jwt;
 
-            return
-              (_jwt == null)
-                  ? Scaffold(
-                      body: Center(
-                          child: Text("Please Login!",
-                              style: TextStyle(fontSize: 30))),
-                      floatingActionButton: FloatingActionButton.large(
-                          onPressed: () {
-                            _login();
-                            Provider.of<AuthModel>(context, listen: false).jwt = _jwt;
-                          },
-                          child: Icon(Icons.login)),
-                    )
-                  : HomePage();
+            return (_jwt == null)
+                ? Scaffold(
+                    body: Center(
+                        child: Text("Please Login!",
+                            style: TextStyle(fontSize: 30))),
+                    floatingActionButton: FloatingActionButton.large(
+                        onPressed: () {
+                          _login();
+                          Provider.of<AuthModel>(context, listen: false).jwt =
+                              _jwt;
+                        },
+                        child: Icon(Icons.login)),
+                  )
+                : HomePage();
           },
-              // ignore: prefer_const_constructors
+          // ignore: prefer_const_constructors
           "/VersusPage": (BuildContext context) => VersusPage(),
           "/Preferences": (BuildContext context) => PreferencesPage(),
+          "/RecipePage": (BuildContext context) => RecipePage(),
         },
       ),
     );

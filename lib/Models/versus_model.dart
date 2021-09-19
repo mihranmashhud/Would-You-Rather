@@ -10,14 +10,23 @@ class VersusModel extends ChangeNotifier {
   static String _price = "";
   static String _image = "";
   static String _cookTime = "";
-  static stack.Stack<Map> recipeStack = stack.Stack();
+  static stack.Stack<int> recipeStack = stack.Stack<int>();
+  static int topCard = 0;
+  static int bottomCard = 1;
+  static Map<String, dynamic> _recipe = {};
 
+  Map<String, dynamic> get recipe => _recipe;
   List<Map<String, dynamic>> get jsonResponse => _jsonResponse;
   String get recipeName => _recipeName;
   String get nutritionScore => _nutritionScore;
   String get price => _price;
   String get image => _image;
   String get cookTime => _cookTime;
+
+  set recipe(Map<String, dynamic> recipe) {
+    _recipe = recipe;
+    notifyListeners();
+  }
 
   set jsonResponse(List<Map<String, dynamic>> jsonResponse) {
     _jsonResponse = jsonResponse;
@@ -48,6 +57,4 @@ class VersusModel extends ChangeNotifier {
     _cookTime = cookTime;
     notifyListeners();
   }
-
-  void saveJSON(String jsonInput) {}
 }
