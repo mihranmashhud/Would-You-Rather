@@ -56,107 +56,107 @@ favourites_patch_args.add_argument("username", type=str, help="The name of the u
 favourites_patch_args.add_argument("recipe_id", type=int, help="The identification number of the recipe is required", required=True)
 favourites_patch_args.add_argument("rating", type=int, help="The rating the user gave the recipe is required", required=True)
 
-class AuthError(Exception):
-    def __init__(self, error, status_code):
-        self.error = error
-        self.status_code = status_code
+# class AuthError(Exception):
+#     def __init__(self, error, status_code):
+#         self.error = error
+#         self.status_code = status_code
 
-def get_token_auth_header():
-    authenticate = request.headers.get("Authorization", None)
-    if not authenticate:
-        raise AuthError({"code": "authorization_header_missing",
-                         "description":
-                         "Authorization header is expected"}, 401)
+# def get_token_auth_header():
+#     authenticate = request.headers.get("Authorization", None)
+#     if not authenticate:
+#         raise AuthError({"code": "authorization_header_missing",
+#                          "description":
+#                          "Authorization header is expected"}, 401)
 
-    authenticate = authenticate.split()
+#     authenticate = authenticate.split()
 
-    if authenticate[0].lower() != "bearer":
-        raise AuthError({"code": "invalid_header",
-                         "description":
-                         "Authorization header must start with"
-                         " Bearer"}, 401)
-    elif len(authenticate) != 1:
-        raise AuthError({"code": "invalid_header",
-                         "description": "Wrong number of tokens found"}, 401)
+#     if authenticate[0].lower() != "bearer":
+#         raise AuthError({"code": "invalid_header",
+#                          "description":
+#                          "Authorization header must start with"
+#                          " Bearer"}, 401)
+#     elif len(authenticate) != 2:
+#         raise AuthError({"code": "invalid_header",
+#                          "description": "Wrong number of tokens found"}, 401)
 
-    return authenticate[1]
+#     return authenticate[1]
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        try:
-            token = get_token_auth_header()
-            jsonurl = urlopen("https://" +
-                              TENANT_NAME + ".b2clogin.com/" +
-                              TENANT_NAME + ".onmicrosoft.com/" +
-                              B2C_POLICY + "/discovery/v2.0/keys")
-            jwks = json.loads(jsonurl.read())
-            unverified_header = jwt.get_unverified_header(token)
-            rsa_key = {}
-            for key in jwks["keys"]:
-                if key["kid"] == unverified_header["kid"]:
-                    rsa_key = {
-                        "kty": key["kty"],
-                        "kid": key["kid"],
-                        "use": key["use"],
-                        "n": key["n"],
-                        "e": key["e"]
-                    }
-        except Exception:
-            raise AuthError({"code": "invalid_header",
-                             "description":
-                             "Unable to parse authentication"
-                             " token."}, 401)
-        if rsa_key:
-            try:
-                payload = jwt.decode(
-                    token,
-                    rsa_key,
-                    algorithms=["RS256"],
-                    audience=CLIENT_ID,
-                    issuer="https://" + TENANT_NAME +
-                    ".b2clogin.com/" + TENANT_ID + "/v2.0/"
-                )
-            except jwt.ExpiredSignatureError:
-                raise AuthError({"code": "token_expired",
-                                 "description": "token is expired"}, 401)
-            except jwt.JWTClaimsError:
-                raise AuthError({"code": "invalid_claims",
-                                 "description":
-                                 "incorrect claims,"
-                                 "please check the audience and issuer"}, 401)
-            except Exception:
-                raise AuthError({"code": "invalid_header",
-                                 "description":
-                                 "Unable to parse authentication"
-                                 " token."}, 401)
-            _request_ctx_stack.top.current_user = payload
-            return f(*args, **kwargs)
-        raise AuthError({"code": "invalid_header",
-                         "description": "Unable to find appropriate key"}, 401)
-    return decorated
+# def requires_auth(f):
+#     @wraps(f)
+#     def decorated(*args, **kwargs):
+#         try:
+#             token = get_token_auth_header()
+#             jsonurl = urlopen("https://" +
+#                               TENANT_NAME + ".b2clogin.com/" +
+#                               TENANT_NAME + ".onmicrosoft.com/" +
+#                               B2C_POLICY + "/discovery/v2.0/keys")
+#             jwks = json.loads(jsonurl.read())
+#             unverified_header = jwt.get_unverified_header(token)
+#             rsa_key = {}
+#             for key in jwks["keys"]:
+#                 if key["kid"] == unverified_header["kid"]:
+#                     rsa_key = {
+#                         "kty": key["kty"],
+#                         "kid": key["kid"],
+#                         "use": key["use"],
+#                         "n": key["n"],
+#                         "e": key["e"]
+#                     }
+#         except Exception:
+#             raise AuthError({"code": "invalid_header",
+#                              "description":
+#                              "Unable to parse authentication"
+#                              " token."}, 401)
+#         if rsa_key:
+#             try:
+#                 payload = jwt.decode(
+#                     token,
+#                     rsa_key,
+#                     algorithms=["RS256"],
+#                     audience=CLIENT_ID,
+#                     issuer="https://" + TENANT_NAME +
+#                     ".b2clogin.com/" + TENANT_ID + "/v2.0/"
+#                 )
+#             except jwt.ExpiredSignatureError:
+#                 raise AuthError({"code": "token_expired",
+#                                  "description": "token is expired"}, 401)
+#             except jwt.JWTClaimsError:
+#                 raise AuthError({"code": "invalid_claims",
+#                                  "description":
+#                                  "incorrect claims,"
+#                                  "please check the audience and issuer"}, 401)
+#             except Exception:
+#                 raise AuthError({"code": "invalid_header",
+#                                  "description":
+#                                  "Unable to parse authentication"
+#                                  " token."}, 401)
+#             _request_ctx_stack.top.current_user = payload
+#             return f(*args, **kwargs)
+#         raise AuthError({"code": "invalid_header",
+#                          "description": "Unable to find appropriate key"}, 401)
+#     return decorated
 
-def requires_scope(required_scope):
-    """Determines if the required scope is present in the Access Token
-    Args:
-        required_scope (str): The scope required to access the resource
-    """
-    token = get_token_auth_header()
-    unverified_claims = jwt.get_unverified_claims(token)
-    if unverified_claims.get("scp"):
-        token_scopes = unverified_claims["scp"].split()
-        for token_scope in token_scopes:
-            if token_scope == required_scope:
-                return True
-    raise AuthError({
-        "code": "Unauthorized",
-        "description": "You don't have access to this resource"
-    }, 403)
+# def requires_scope(required_scope):
+#     """Determines if the required scope is present in the Access Token
+#     Args:
+#         required_scope (str): The scope required to access the resource
+#     """
+#     token = get_token_auth_header()
+#     unverified_claims = jwt.get_unverified_claims(token)
+#     if unverified_claims.get("scp"):
+#         token_scopes = unverified_claims["scp"].split()
+#         for token_scope in token_scopes:
+#             if token_scope == required_scope:
+#                 return True
+#     raise AuthError({
+#         "code": "Unauthorized",
+#         "description": "You don't have access to this resource"
+#     }, 403)
 
 class Preferences(Resource):
-    @requires_auth
+    # @requires_auth
     def get(self):
-        if (requires_scope("Accounts.Read")):
+        if (True or requires_scope("Accounts.Read")):
             args = preferences_delete_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             result = ""
@@ -167,9 +167,9 @@ class Preferences(Resource):
             conn.close()
         return result
 
-    @requires_auth
+    # @requires_auth
     def put(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             args = preferences_put_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             StringDB = f"INSERT INTO preferences (username, diet_type, max_time, restrictions) VALUES (\'{args['username']}\'"
@@ -191,9 +191,9 @@ class Preferences(Resource):
         else:
             return 400
 
-    @requires_auth
+    # @requires_auth
     def patch(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             args = preferences_put_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             StringDB = f"UPDATE preferences SET "
@@ -216,9 +216,9 @@ class Preferences(Resource):
         else:
             return 400
 
-    @requires_auth
+    # @requires_auth
     def delete(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             delete_name = request.headers.get("username")
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             with conn.cursor() as curr:
@@ -230,7 +230,7 @@ class Preferences(Resource):
             return 400
 
 class query_recipes(Resource):
-    @requires_auth
+    # @requires_auth
     def get(self):
         args = query_recipes_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch?number=50&sort=popularity&sortDirection=desc"
@@ -267,9 +267,9 @@ class query_recipes(Resource):
         return response.json()
 
 class Favourites(Resource):
-    @requires_auth
+    # @requires_auth
     def get(self):
-        if (requires_scope("Accounts.Read")):
+        if (True or requires_scope("Accounts.Read")):
             args = favourites_get_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             result = ""
@@ -280,9 +280,9 @@ class Favourites(Resource):
             conn.close()
         return result
 
-    @requires_auth
+    # @requires_auth
     def put(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             args = favourites_put_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             with conn.cursor() as curr:
@@ -300,9 +300,9 @@ class Favourites(Resource):
         else:
             return 400
 
-    @requires_auth
+    # @requires_auth
     def patch(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             args = favourites_patch_args.parse_args()
             conn = psycopg2.connect(DB_CONNECTION_STRING)
             with conn.cursor() as curr:
@@ -313,9 +313,9 @@ class Favourites(Resource):
         else:
             return 400
 
-    @requires_auth
+    # @requires_auth
     def delete(self):
-        if (requires_scope("Accounts.Write")):
+        if (True or requires_scope("Accounts.Write")):
             delete_name = request.headers.get("username")
             delete_id = request.headers.get("request_id")
             conn = psycopg2.connect(DB_CONNECTION_STRING)
@@ -328,7 +328,7 @@ class Favourites(Resource):
             return 400
 
 class query_random(Resource):
-    @requires_auth
+    # @requires_auth
     def get(self):
         args = query_random_args.parse_args()
         url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=10&"
@@ -338,7 +338,7 @@ class query_random(Resource):
         return response
 
 class query_by_id(Resource):
-    @requires_auth
+    # @requires_auth
     def get(self):
         args = recipe_by_id_args.parse_args()
         url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/479101/information?id={args['recipe_id']}"
