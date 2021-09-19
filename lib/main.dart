@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wouldyourather/main_page_user_input.dart';
 import 'package:wouldyourather/home_page.dart';
 import 'package:wouldyourather/preferences.dart';
 import 'package:wouldyourather/Models/versus_model.dart';
 import 'package:wouldyourather/versus_page.dart';
+import 'package:wouldyourather/Models/preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,7 +27,10 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<VersusModel>(
           create: (_) => VersusModel(),
-        )
+        ),
+        ChangeNotifierProvider<PreferencesModel>(
+            create: (_) => PreferencesModel(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -43,7 +46,7 @@ class MyApp extends StatelessWidget {
           //     HomePage(title: 'Flutter Demo Home Page'),
           "/": (BuildContext context) =>
               // ignore: prefer_const_constructors
-              HomePage(title: 'Flutter Demo Home Page'),
+              HomePage(),
           "/VersusPage": (BuildContext context) => VersusPage(),
           "/Preferences": (BuildContext context) => PreferencesPage(),
         },

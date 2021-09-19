@@ -56,12 +56,12 @@ class _PromptForQueryState extends State<PromptForQuery> {
 
   final double _fontSize = 30;
 
-  Future<List<Map<String, dynamic>>> getRecipeList(
-      String cuisine, String meal) async {
-    Response jsonReponse = await get('');
-    List<Map<String, dynamic>> response = jsonDecode(jsonReponse.body);
-    return response;
-  }
+  // Future<List<Map<String, dynamic>>> getRecipeList(
+  //     String cuisine, String meal) async {
+  //   Response jsonReponse = await get('');
+  //   List<Map<String, dynamic>> response = jsonDecode(jsonReponse.body);
+  //   return response;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +129,7 @@ class _PromptForQueryState extends State<PromptForQuery> {
                       child: FloatingActionButton(
                         backgroundColor: Colors.green,
                         onPressed: () {
-                          model.jsonResponse(getRecipeList(_cuisine, _meal));
+                          // model.jsonResponse(getRecipeList(_cuisine, _meal));
                           Navigator.of(context).pushNamed("/VersusPage");
                         },
                         child: const Icon(
