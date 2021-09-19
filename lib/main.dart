@@ -5,6 +5,7 @@ import 'package:wouldyourather/home_page.dart';
 import 'package:wouldyourather/preferences.dart';
 import 'package:wouldyourather/Models/versus_model.dart';
 import 'package:wouldyourather/versus_page.dart';
+import 'package:wouldyourather/recipe_page.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
               HomePage(title: 'Flutter Demo Home Page'),
           "/VersusPage": (BuildContext context) => VersusPage(),
           "/Preferences": (BuildContext context) => PreferencesPage(),
+          "/RecipePage": (BuildContext context) => RecipePage(),
         },
       ),
     );

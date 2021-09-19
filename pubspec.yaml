@@ -40,6 +40,7 @@ dependencies:
   http:
   stack:
   flutter_swiper:
+  webview_flutter:
 
 dev_dependencies:
   flutter_test:

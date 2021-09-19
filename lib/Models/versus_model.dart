@@ -13,13 +13,20 @@ class VersusModel extends ChangeNotifier {
   static stack.Stack<int> recipeStack = stack.Stack<int>();
   static int topCard = 0;
   static int bottomCard = 1;
+  static Map<String, dynamic> _recipe = {};
 
+  Map<String, dynamic> get recipe => _recipe;
   List<Map<String, dynamic>> get jsonResponse => _jsonResponse;
   String get recipeName => _recipeName;
   String get nutritionScore => _nutritionScore;
   String get price => _price;
   String get image => _image;
   String get cookTime => _cookTime;
+
+  set recipe(Map<String, dynamic> recipe) {
+    _recipe = recipe;
+    notifyListeners();
+  }
 
   set jsonResponse(List<Map<String, dynamic>> jsonResponse) {
     _jsonResponse = jsonResponse;

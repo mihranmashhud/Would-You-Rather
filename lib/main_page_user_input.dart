@@ -134,7 +134,7 @@ class _PromptForQueryState extends State<PromptForQuery> {
                               "recipeName": "Chunky Pizza",
                               "nutritionScore": "69%",
                               "image":
-                                  "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.businessinsider.com%2Ftrump-hair-blowing-in-wind-photos-2018-4&psig=AOvVaw37QOrs1kLhnx82tRjgYJAP&ust=1632112923780000&source=images&cd=vfe&ved=0CAgQjRxqFwoTCLDJ082civMCFQAAAAAdAAAAABAD",
+                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
                               "price": "\$21",
                               "cookTime": "69 mins"
                             },
@@ -142,15 +142,23 @@ class _PromptForQueryState extends State<PromptForQuery> {
                               "recipeName": "ButterSquash Pie",
                               "nutritionScore": "25%",
                               "image":
-                                  "https://www.google.com/imgres?imgurl=https%3A%2F%2Fi.guim.co.uk%2Fimg%2Fmedia%2F5f9f97c5d3d45d74344c65cbaf0ff75b8997c0f8%2F0_114_1707_1024%2Fmaster%2F1707.jpg%3Fwidth%3D1200%26height%3D900%26quality%3D85%26auto%3Dformat%26fit%3Dcrop%26s%3D1b484b722515ca2544a3fc5523c1db70&imgrefurl=https%3A%2F%2Fwww.theguardian.com%2Fus-news%2F2018%2Ffeb%2F07%2Fdonald-trump-hair-wind&tbnid=vzPfif3qS9vXiM&vet=12ahUKEwjHjNvJnIrzAhXLf6wKHRHtB_YQMygFegUIARCEAQ..i&docid=VzqluuIeCSsYtM&w=1200&h=900&q=donald%20trump%27s%20wig%20falling%20off&ved=2ahUKEwjHjNvJnIrzAhXLf6wKHRHtB_YQMygFegUIARCEAQ",
+                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
                               "price": "\$56",
                               "cookTime": "23 mins"
+                            },
+                            {
+                              "recipeName": "Monkey Pizza",
+                              "nutritionScore": "629%",
+                              "image":
+                                  "https://i.insider.com/5ac6672d524c4a1c008b47d4?width=700&format=jpeg&auto=webp",
+                              "price": "\$23421",
+                              "cookTime": "64234239 mins"
                             },
                             {
                               "recipeName": "Jumping Jack Jellybeans",
                               "nutritionScore": "12%",
                               "image":
-                                  "https://www.google.com/imgres?imgurl=https%3A%2F%2Fmedia.allure.com%2Fphotos%2F5a7b1ae4a3d9063daae3ca5b%2F2%3A1%2Fw_5472%2Ch_2736%2Cc_limit%2Fdonald-trump-head-exposed.jpg&imgrefurl=https%3A%2F%2Fwww.allure.com%2Fstory%2Fdonald-trump-comb-over-wind&tbnid=R_8uDQCHgbfpwM&vet=12ahUKEwjHjNvJnIrzAhXLf6wKHRHtB_YQMyhFegQIARA3..i&docid=106XXxASdf0k_M&w=5472&h=2736&q=donald%20trump%27s%20wig%20falling%20off&ved=2ahUKEwjHjNvJnIrzAhXLf6wKHRHtB_YQMyhFegQIARA3",
+                                  "https://media.allure.com/photos/5a7b1ae4a3d9063daae3ca5b/2:1/w_5472,h_2736,c_limit/donald-trump-head-exposed.jpg",
                               "price": "\$7",
                               "cookTime": "2 mins"
                             },
