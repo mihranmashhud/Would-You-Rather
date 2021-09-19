@@ -41,23 +41,23 @@ class _PreferencesPageState extends State<PreferencesPage> {
     "Wheat",
   ];
 
-  Future<void> _patch_or_put(String jwt) async {
-    Response response;
-    try {
-      response = await http.patch(Uri.parse(""), headers: {
-        "Authentication": "Bearer ${jwt}"
-      });
-    } catch (e) {
-      try {
-        response = await http.put(Uri.parse(""), headers: {
-          "Authentication": "Bearer ${jwt}"
-        });
-      }
-      catch(e) {
-        print(e);
-      }
-    }
-  }
+  // Future<void> _patch_or_put(String jwt) async {
+  //   Response response;
+  //   try {
+  //     response = await http.patch(Uri.parse(""), headers: {
+  //       "Authentication": "Bearer ${jwt}"
+  //     });
+  //   } catch (e) {
+  //     try {
+  //       response = await http.put(Uri.parse(""), headers: {
+  //         "Authentication": "Bearer ${jwt}"
+  //       });
+  //     }
+  //     catch(e) {
+  //       print(e);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
