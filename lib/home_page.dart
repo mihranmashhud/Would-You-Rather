@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.menu, color: Colors.black),
+            icon: const Icon(Icons.menu, color: Colors.black),
             onPressed: () {
               Navigator.of(context).pushNamed("/Preferences");
             },

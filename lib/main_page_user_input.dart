@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wouldyourather/Models/Versus_model.dart';
+import 'package:wouldyourather/Models/versus_model.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
 
 class PromptForQuery extends StatefulWidget {
   const PromptForQuery({Key? key}) : super(key: key);
@@ -54,12 +56,19 @@ class _PromptForQueryState extends State<PromptForQuery> {
 
   final double _fontSize = 30;
 
+  Future<List<Map<String, dynamic>>> getRecipeList(
+      String cuisine, String meal) async {
+    Response jsonReponse = await get('');
+    List<Map<String, dynamic>> response = jsonDecode(jsonReponse.body);
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<VersusModel>(
-        builder: (context, model, child) => Form(
-            key: _formKey,
-            child: Container(
+    return Form(
+        key: _formKey,
+        child: Consumer<VersusModel>(
+            builder: (context, model, child) => Container(
                 margin: const EdgeInsets.all(40.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,6 +129,7 @@ class _PromptForQueryState extends State<PromptForQuery> {
                       child: FloatingActionButton(
                         backgroundColor: Colors.green,
                         onPressed: () {
+                          model.jsonResponse(getRecipeList(_cuisine, _meal));
                           Navigator.of(context).pushNamed("/VersusPage");
                         },
                         child: const Icon(

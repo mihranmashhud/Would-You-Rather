@@ -38,6 +38,8 @@ dependencies:
   provider:
   fluttericon: ^2.0.0
   google_fonts: ^2.1.0
+  http:
+  stack:
 
 dev_dependencies:
   flutter_test:
