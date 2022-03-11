@@ -19,6 +19,6 @@ For revenue model and competitor information, please consult the Judging Present
 
 ![Screen 1](https://user-images.githubusercontent.com/32528837/157807032-e0db0234-bb38-4a23-974a-a9efa5ee54f7.jpg)
 
-![Screen 2](https://user-images.githubusercontent.com/32528837/157807053-36afb775-5be8-4531-8d1d-9726273b3856.jpg)
+![Screen 2](https://user-images.githubusercontent.com/32528837/157808375-26956db3-5d9b-4661-a893-a0c7a73a7b53.jpg)
 
 ![Screen 3](https://user-images.githubusercontent.com/32528837/157807064-30a927dd-3570-484c-80fb-d13db3fea376.jpg)
